@@ -39,6 +39,8 @@ const theme = {
 
     // Sombras
     shadow: 'rgba(0, 0, 0, 0.08)',
+
+    error: '#E53935'  // para bordes y textos de error
   },
 
   // Tipografía
@@ -95,4 +97,4 @@ const theme = {
   },
 };
 
-export default theme;
+export {theme};

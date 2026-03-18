@@ -8,19 +8,16 @@ import {
   StyleSheet,
   SafeAreaView,
   ScrollView,
-  Pressable,
 } from 'react-native';
-import theme from '../constants/theme';
+// Importamos el theme (ajusta la ruta si es necesario)
+import { theme } from '../constants/theme';
+import Svg, { Path, Circle } from 'react-native-svg';
+import authService from '../services/authService';
 
-// ---------------------------------------------------------------------------
-// Íconos SVG inline usando react-native-svg (asegúrate de tenerlo instalado)
-// Si prefieres, reemplaza con tus propios íconos o una librería como @expo/vector-icons
-// ---------------------------------------------------------------------------
-import Svg, { Path, Circle, G, Rect } from 'react-native-svg';
-
+// --- Iconos Inline (Mantenemos tus hermosos SVGs) ---
 const SitemarkLogo = () => (
   <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
-    <Path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.35C17.5 22.15 21 17.25 21 12V6L12 2z" fill={theme.colors.brand} />
+    <Path d="M12 2L4 6v6c0 5.25 3.5 10.15 8 11.35C17.5 22.15 21 17.25 21 12V6L12 2z" fill={theme.colors.brand || theme.colors.primary} />
     <Path d="M9 12l2 2 4-4" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
   </Svg>
 );
@@ -42,17 +39,36 @@ const FacebookIcon = () => (
 );
 
 // ---------------------------------------------------------------------------
-// Componente principal
+// Componente principal (Ahora con { navigation })
 // ---------------------------------------------------------------------------
-export default function LoginPage({ onLogin, onForgotPassword, onSignUp, onGoogleLogin, onFacebookLogin }) {
+export default function LoginPage({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
 
-  const handleLogin = () => {
-    if (onLogin) onLogin({ email, password, rememberMe });
+  // Lógica de Login (Aquí conectaremos Firebase luego)
+const handleLogin = async () => {
+    // 1. Validamos que los campos no estén vacíos (puedes usar tu función validate)
+    if (email && password) {
+      
+      // 2. Llamamos al servicio de autenticación
+      const result = await authService.login(email, password);
+
+      if (result.success) {
+        // ¡Éxito! Firebase validó las credenciales
+        alert("¡Bienvenido de nuevo!");
+          navigation.replace('Home');
+        // Aquí es donde lo mandas a la pantalla principal de tu app
+        // navigation.navigate('Home'); 
+      } else {
+        // Si la contraseña es incorrecta o el usuario no existe, Firebase nos dirá por qué
+        alert("Error al iniciar sesión: " + result.error);
+      }
+    } else {
+      alert("Por favor, completa todos los campos.");
+    }
   };
 
   return (
@@ -67,7 +83,7 @@ export default function LoginPage({ onLogin, onForgotPassword, onSignUp, onGoogl
           {/* Logo + Marca */}
           <View style={styles.logoRow}>
             <SitemarkLogo />
-            <Text style={styles.brandName}>Sitemark</Text>
+            <Text style={styles.brandName}>DuckIndustries</Text>
           </View>
 
           {/* Título */}
@@ -77,15 +93,11 @@ export default function LoginPage({ onLogin, onForgotPassword, onSignUp, onGoogl
           <View style={styles.fieldGroup}>
             <Text style={styles.label}>Correo</Text>
             <TextInput
-              style={[
-                styles.input,
-                emailFocused && styles.inputFocused,
-              ]}
-              placeholder="your@email.com"
+              style={[styles.input, emailFocused && styles.inputFocused]}
+              placeholder="tu@email.com"
               placeholderTextColor={theme.colors.textPlaceholder}
               keyboardType="email-address"
               autoCapitalize="none"
-              autoCorrect={false}
               value={email}
               onChangeText={setEmail}
               onFocus={() => setEmailFocused(true)}
@@ -97,10 +109,7 @@ export default function LoginPage({ onLogin, onForgotPassword, onSignUp, onGoogl
           <View style={styles.fieldGroup}>
             <Text style={styles.label}>Contraseña</Text>
             <TextInput
-              style={[
-                styles.input,
-                passwordFocused && styles.inputFocused,
-              ]}
+              style={[styles.input, passwordFocused && styles.inputFocused]}
               placeholder="••••••"
               placeholderTextColor={theme.colors.textPlaceholder}
               secureTextEntry
@@ -136,15 +145,6 @@ export default function LoginPage({ onLogin, onForgotPassword, onSignUp, onGoogl
             <Text style={styles.buttonPrimaryText}>Iniciar sesión</Text>
           </TouchableOpacity>
 
-          {/* Forgot password */}
-          <TouchableOpacity
-            onPress={onForgotPassword}
-            style={styles.forgotContainer}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.forgotText}>¿Olvidaste tu contraseña?</Text>
-          </TouchableOpacity>
-
           {/* Divisor */}
           <View style={styles.dividerRow}>
             <View style={styles.dividerLine} />
@@ -152,31 +152,25 @@ export default function LoginPage({ onLogin, onForgotPassword, onSignUp, onGoogl
             <View style={styles.dividerLine} />
           </View>
 
-          {/* Sign in with Google */}
-          <TouchableOpacity
-            style={styles.buttonSocial}
-            onPress={onGoogleLogin}
-            activeOpacity={0.8}
-          >
+          {/* Botones Sociales */}
+          <TouchableOpacity style={styles.buttonSocial} activeOpacity={0.8}>
             <GoogleIcon />
             <Text style={styles.buttonSocialText}>Iniciar con Google</Text>
           </TouchableOpacity>
 
-          {/* Sign in with Facebook */}
-          <TouchableOpacity
-            style={styles.buttonSocial}
-            onPress={onFacebookLogin}
-            activeOpacity={0.8}
-          >
+          <TouchableOpacity style={styles.buttonSocial} activeOpacity={0.8}>
             <FacebookIcon />
             <Text style={styles.buttonSocialText}>Iniciar con Facebook</Text>
           </TouchableOpacity>
 
-          {/* Sign up */}
+          {/* Sign up (USANDO NAVIGATION) */}
           <View style={styles.signUpRow}>
             <Text style={styles.signUpText}>¿No tienes una cuenta? </Text>
-            <TouchableOpacity onPress={onSignUp} activeOpacity={0.7}>
-              <Text style={styles.signUpLink}>Registrate</Text>
+            <TouchableOpacity 
+              onPress={() => navigation.navigate('Register')} 
+              activeOpacity={0.7}
+            >
+              <Text style={styles.signUpLink}>Regístrate</Text>
             </TouchableOpacity>
           </View>
 
@@ -186,189 +180,30 @@ export default function LoginPage({ onLogin, onForgotPassword, onSignUp, onGoogl
   );
 }
 
-// ---------------------------------------------------------------------------
-// Estilos — usan theme.js para todos los colores y tokens
-// ---------------------------------------------------------------------------
+// --- Los Estilos se mantienen iguales, asegúrate de tener theme.js configurado ---
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: theme.spacing.xl,
-    paddingHorizontal: theme.spacing.md,
-  },
-
-  // Tarjeta
-  card: {
-    width: '100%',
-    maxWidth: 400,
-    backgroundColor: theme.colors.card,
-    borderRadius: theme.borderRadius.lg,
-    padding: theme.spacing.lg,
-    paddingTop: theme.spacing.xl,
-    ...theme.shadows.card,
-  },
-
-  // Logo
-  logoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: theme.spacing.lg,
-    gap: theme.spacing.sm,
-  },
-  brandName: {
-    fontSize: theme.fontSizes.md,
-    fontWeight: theme.fontWeights.semibold,
-    color: theme.colors.textPrimary,
-    letterSpacing: 0.2,
-  },
-
-  // Título
-  title: {
-    fontSize: theme.fontSizes.xxl,
-    fontWeight: theme.fontWeights.bold,
-    color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.lg,
-    letterSpacing: -0.5,
-  },
-
-  // Campos
-  fieldGroup: {
-    marginBottom: theme.spacing.md,
-  },
-  label: {
-    fontSize: theme.fontSizes.sm,
-    fontWeight: theme.fontWeights.medium,
-    color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.xs,
-  },
-  input: {
-    height: 48,
-    borderWidth: 1,
-    borderColor: theme.colors.inputBorder,
-    borderRadius: theme.borderRadius.md,
-    paddingHorizontal: theme.spacing.md,
-    fontSize: theme.fontSizes.md,
-    color: theme.colors.textPrimary,
-    backgroundColor: theme.colors.inputBackground,
-  },
-  inputFocused: {
-    borderColor: theme.colors.inputBorderFocused,
-    borderWidth: 1.5,
-  },
-
-  // Remember me
-  rememberRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: theme.spacing.lg,
-    gap: theme.spacing.sm,
-  },
-  checkbox: {
-    width: 18,
-    height: 18,
-    borderRadius: theme.borderRadius.sm,
-    borderWidth: 1.5,
-    borderColor: theme.colors.checkboxBorder,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: theme.colors.card,
-  },
-  checkboxChecked: {
-    backgroundColor: theme.colors.checkboxChecked,
-    borderColor: theme.colors.checkboxChecked,
-  },
-  rememberText: {
-    fontSize: theme.fontSizes.sm,
-    color: theme.colors.textSecondary,
-    fontWeight: theme.fontWeights.regular,
-  },
-
-  // Botón primario
-  buttonPrimary: {
-    height: 50,
-    backgroundColor: theme.colors.buttonPrimary,
-    borderRadius: theme.borderRadius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: theme.spacing.md,
-    ...theme.shadows.button,
-  },
-  buttonPrimaryText: {
-    color: theme.colors.buttonPrimaryText,
-    fontSize: theme.fontSizes.md,
-    fontWeight: theme.fontWeights.semibold,
-    letterSpacing: 0.3,
-  },
-
-  // Forgot password
-  forgotContainer: {
-    alignItems: 'center',
-    marginBottom: theme.spacing.md,
-  },
-  forgotText: {
-    fontSize: theme.fontSizes.sm,
-    color: theme.colors.textLink,
-    fontWeight: theme.fontWeights.medium,
-    textDecorationLine: 'underline',
-  },
-
-  // Divisor
-  dividerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: theme.spacing.md,
-    gap: theme.spacing.sm,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: theme.colors.divider,
-  },
-  dividerText: {
-    fontSize: theme.fontSizes.sm,
-    color: theme.colors.dividerText,
-    fontWeight: theme.fontWeights.regular,
-  },
-
-  // Botones sociales
-  buttonSocial: {
-    height: 48,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: theme.spacing.sm,
-    borderWidth: 1,
-    borderColor: theme.colors.buttonSocialBorder,
-    borderRadius: theme.borderRadius.md,
-    backgroundColor: theme.colors.buttonSocial,
-    marginBottom: theme.spacing.sm,
-  },
-  buttonSocialText: {
-    fontSize: theme.fontSizes.sm,
-    fontWeight: theme.fontWeights.medium,
-    color: theme.colors.buttonSocialText,
-  },
-
-  // Sign up
-  signUpRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: theme.spacing.sm,
-  },
-  signUpText: {
-    fontSize: theme.fontSizes.sm,
-    color: theme.colors.textSecondary,
-  },
-  signUpLink: {
-    fontSize: theme.fontSizes.sm,
-    color: theme.colors.textLink,
-    fontWeight: theme.fontWeights.semibold,
-    textDecorationLine: 'underline',
-  },
+  safeArea: { flex: 1, backgroundColor: theme.colors.background },
+  scrollContainer: { flexGrow: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: theme.spacing.xl, paddingHorizontal: theme.spacing.md },
+  card: { width: '100%', maxWidth: 400, backgroundColor: theme.colors.card, borderRadius: theme.borderRadius.lg, padding: theme.spacing.lg, paddingTop: theme.spacing.xl, ...theme.shadows.card },
+  logoRow: { flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.lg, gap: theme.spacing.sm },
+  brandName: { fontSize: theme.fontSizes.md, fontWeight: theme.fontWeights.semibold, color: theme.colors.textPrimary },
+  title: { fontSize: theme.fontSizes.xxl, fontWeight: theme.fontWeights.bold, color: theme.colors.textPrimary, marginBottom: theme.spacing.lg },
+  fieldGroup: { marginBottom: theme.spacing.md },
+  label: { fontSize: theme.fontSizes.sm, fontWeight: theme.fontWeights.medium, color: theme.colors.textSecondary, marginBottom: theme.spacing.xs },
+  input: { height: 48, borderWidth: 1, borderColor: theme.colors.inputBorder, borderRadius: theme.borderRadius.md, paddingHorizontal: theme.spacing.md, fontSize: theme.fontSizes.md, color: theme.colors.textPrimary, backgroundColor: theme.colors.inputBackground },
+  inputFocused: { borderColor: theme.colors.inputBorderFocused, borderWidth: 1.5 },
+  rememberRow: { flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.lg, gap: theme.spacing.sm },
+  checkbox: { width: 18, height: 18, borderRadius: theme.borderRadius.sm, borderWidth: 1.5, borderColor: theme.colors.checkboxBorder, alignItems: 'center', justifyContent: 'center' },
+  checkboxChecked: { backgroundColor: theme.colors.checkboxChecked, borderColor: theme.colors.checkboxChecked },
+  rememberText: { fontSize: theme.fontSizes.sm, color: theme.colors.textSecondary },
+  buttonPrimary: { height: 50, backgroundColor: theme.colors.buttonPrimary, borderRadius: theme.borderRadius.md, alignItems: 'center', justifyContent: 'center', marginBottom: theme.spacing.md },
+  buttonPrimaryText: { color: theme.colors.buttonPrimaryText, fontSize: theme.fontSizes.md, fontWeight: theme.fontWeights.semibold },
+  dividerRow: { flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing.md, gap: theme.spacing.sm },
+  dividerLine: { flex: 1, height: 1, backgroundColor: theme.colors.divider },
+  dividerText: { fontSize: theme.fontSizes.sm, color: theme.colors.dividerText },
+  buttonSocial: { height: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: theme.spacing.sm, borderWidth: 1, borderColor: theme.colors.buttonSocialBorder, borderRadius: theme.borderRadius.md, backgroundColor: theme.colors.buttonSocial, marginBottom: theme.spacing.sm },
+  buttonSocialText: { fontSize: theme.fontSizes.sm, fontWeight: theme.fontWeights.medium, color: theme.colors.buttonSocialText },
+  signUpRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: theme.spacing.sm },
+  signUpText: { fontSize: theme.fontSizes.sm, color: theme.colors.textSecondary },
+  signUpLink: { fontSize: theme.fontSizes.sm, color: theme.colors.textLink, fontWeight: theme.fontWeights.semibold, textDecorationLine: 'underline' },
 });
