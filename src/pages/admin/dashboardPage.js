@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-// Verifica que esta ruta sea exacta. Si tu archivo está en src/services/authService.js, esta ruta es correcta.
 import authService from '../../services/authService'; 
 
-export default function DashboardPage() {
+// 1. Recibimos { navigation } en la función principal
+export default function DashboardPage({ navigation }) {
   const user = authService.getCurrentUser();
 
   const handleLogout = async () => {
@@ -15,8 +15,13 @@ export default function DashboardPage() {
     }
   };
 
-  const StatCard = ({ title, value, icon, color }) => (
-    <TouchableOpacity style={styles.card} activeOpacity={0.7}>
+  // 2. Agregamos 'onPress' a las desestructuración de props
+  const StatCard = ({ title, value, icon, color, onPress }) => (
+    <TouchableOpacity 
+      style={styles.card} 
+      activeOpacity={0.7} 
+      onPress={onPress} // 3. ¡IMPORTANTE! Asignamos la acción aquí
+    >
       <View style={[styles.iconContainer, { backgroundColor: color + '20' }]}>
         <MaterialCommunityIcons name={icon} size={28} color={color} />
       </View>
@@ -37,7 +42,15 @@ export default function DashboardPage() {
         </View>
 
         <View style={styles.grid}>
-          <StatCard title="Agenda y Horas" value="Configurar" icon="calendar-clock" color="#4F46E5" />
+          {/* Ahora este onPress sí será ejecutado por el TouchableOpacity de arriba */}
+          <StatCard 
+            title="Agenda y Horas" 
+            value="Configurar" 
+            icon="calendar-clock" 
+            color="#4F46E5" 
+            onPress={() => navigation.navigate('NuevaCita')}
+          />
+          
           <StatCard title="Promociones" value="3 Activas" icon="tag-multiple" color="#10B981" />
           <StatCard title="Precios" value="Editar Lista" icon="currency-usd" color="#F59E0B" />
           <StatCard title="Clientes" value="12 Registrados" icon="account-group" color="#06B6D4" />
@@ -66,7 +79,6 @@ const styles = StyleSheet.create({
     padding: 18,
     borderRadius: 15,
     marginBottom: 12,
-    // Sombras básicas
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,

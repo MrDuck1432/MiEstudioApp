@@ -9,8 +9,7 @@ import authService from './src/services/authService'; // Importamos tu servicio 
 import LoginPage from './src/pages/user/loginPage'; 
 import RegisterPage from './src/pages/user/registerPage'; 
 import MainTabNavigation from './src/navigation/mainTabNavigation';
-
-// Importamos la nueva página de Admin
+import NuevaCitaPage from './src/pages/admin/nuevaCitaPage';
 import DashboardPage from './src/pages/admin/dashboardPage';
 
 const Stack = createStackNavigator();
@@ -45,7 +44,10 @@ export default function App() {
         {user ? (
           // --- SI HAY USUARIO: SEPARAMOS POR ROL ---
           role === 'admin' ? (
-            <Stack.Screen name="AdminDashboard" component={DashboardPage} />
+            <>
+              <Stack.Screen name="AdminDashboard" component={DashboardPage} />
+              <Stack.Screen name="NuevaCita" component={NuevaCitaPage} />
+            </>
           ) : (
             <Stack.Screen name="Main" component={MainTabNavigation} />
           )
