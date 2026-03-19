@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { theme } from '../constants/theme';
-import authService from '../services/authService';
+import { theme } from '../../constants/theme';
+import authService from '../../services/authService';
 
 export default function HomePage({ navigation }) {
   const handleLogout = async () => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
-import { theme } from '../constants/theme';
-import authService from '../services/authService';
+import { theme } from '../../constants/theme';
+import authService from '../../services/authService';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function ProfilePage() {

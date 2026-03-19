@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native';
-import { theme } from '../constants/theme';
+import { theme } from '../../constants/theme';
 
 export default function PromoPage() { 
   return (

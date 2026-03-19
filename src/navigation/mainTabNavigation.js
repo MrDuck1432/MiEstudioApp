@@ -4,11 +4,11 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { theme } from '../constants/theme';
 
 // Importa tus páginas con los nombres que elegiste
-import homePage from '../pages/homePage';
-import promoPage from '../pages/promoPage';
-import agendaPage from '../pages/agendaPage';
-import historyPage from '../pages/historyPage';
-import profilePage from '../pages/profilePage';
+import homePage from '../pages/user/homePage';
+import promoPage from '../pages/user/promoPage';
+import agendaPage from '../pages/user/agendaPage';
+import historyPage from '../pages/user/historyPage';
+import profilePage from '../pages/user/profilePage';
 
 const Tab = createBottomTabNavigator();
 

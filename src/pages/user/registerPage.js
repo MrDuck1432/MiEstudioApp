@@ -10,8 +10,8 @@ import {
   ScrollView,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { theme } from '../constants/theme';
-import authService from '../services/authService';
+import { theme } from '../../constants/theme';
+import authService from '../../services/authService';
 
 // ---------------------------------------------------------------------------
 // Componente principal

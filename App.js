@@ -5,8 +5,8 @@ import { onAuthStateChanged } from 'firebase/auth'; // Escucha el estado del usu
 import { auth } from './src/database/firebaseConfig'; // Tu config de Firebase
 
 // Importamos tus páginas y el Navegador de pestañas
-import LoginPage from './src/pages/loginPage'; 
-import RegisterPage from './src/pages/registerPage'; 
+import LoginPage from './src/pages/user/loginPage'; 
+import RegisterPage from './src/pages/user/registerPage'; 
 import MainTabNavigation from './src/navigation/mainTabNavigation';
 
 const Stack = createStackNavigator();

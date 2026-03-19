@@ -10,9 +10,9 @@ import {
   ScrollView,
 } from 'react-native';
 // Importamos el theme (ajusta la ruta si es necesario)
-import { theme } from '../constants/theme';
+import { theme } from '../../constants/theme';
 import Svg, { Path, Circle } from 'react-native-svg';
-import authService from '../services/authService';
+import authService from '../../services/authService';
 
 // --- Iconos Inline (Mantenemos tus hermosos SVGs) ---
 const SitemarkLogo = () => (

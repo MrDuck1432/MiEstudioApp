@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
-import { theme } from '../constants/theme';
+import { theme } from '../../constants/theme';
 
 // Configuración en español para el calendario
 LocaleConfig.locales['es'] = {
@@ -40,7 +40,7 @@ export default function AgendaPage() {
       <Calendar
         onDayPress={handleDayPress}
         markedDates={markedDates}
-        minDate={new Date().toISOString().split('T')[0]} // Bloquea días pasados
+        minDate={new Date().toISOString().split('T')[0]} 
         theme={{
           selectedDayBackgroundColor: theme.colors.brand,
           todayTextColor: theme.colors.brand,
@@ -52,51 +52,86 @@ export default function AgendaPage() {
 
       <View style={styles.hoursWrapper}>
         <Text style={styles.sectionTitle}>
-          {selectedDay ? `Horas disponibles:` : 'Selecciona una fecha'}
+          {selectedDay ? `Horas para el ${selectedDay}:` : 'Selecciona una fecha'}
         </Text>
 
         {availableHours.length > 0 ? (
           <FlatList
             data={availableHours}
-            numColumns={3} // AQUÍ: Orden en 3 bloques hacia el lado
+            numColumns={3}
             keyExtractor={(item) => item}
             renderItem={({ item }) => (
               <TouchableOpacity style={styles.hourBlock}>
                 <Text style={styles.hourText}>{item}</Text>
               </TouchableOpacity>
             )}
-            columnWrapperStyle={styles.row} // Espaciado entre bloques
+            columnWrapperStyle={styles.row}
           />
-        ) : (
-          selectedDay && (
-            <View style={styles.noHoursContainer}>
-              <Text style={styles.noHoursText}>No hay horas disponibles para este día.</Text>
-            </View>
-          )
-        )}
+        ) : selectedDay ? (
+          <View style={styles.noHoursContainer}>
+            <Text style={styles.noHoursText}>No hay horas disponibles para este día.</Text>
+          </View>
+        ) : null}
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background, paddingHorizontal: 20, paddingTop: 50 },
-  title: { fontSize: 24, fontWeight: 'bold', color: theme.colors.textPrimary, marginBottom: 15 },
-  calendar: { borderRadius: 12, paddingBottom: 10, elevation: 2 },
-  hoursWrapper: { flex: 1, marginTop: 20 },
-  sectionTitle: { fontSize: 16, fontWeight: '600', color: theme.colors.textSecondary, marginBottom: 15 },
-  row: { justifyContent: 'space-between', marginBottom: 10 },
+  container: { 
+    flex: 1, 
+    backgroundColor: theme.colors.background, 
+    paddingHorizontal: 20, 
+    paddingTop: 50 
+  },
+  title: { 
+    fontSize: 24, 
+    fontWeight: 'bold', 
+    color: theme.colors.textPrimary, 
+    marginBottom: 15 
+  },
+  calendar: { 
+    borderRadius: 12, 
+    paddingBottom: 10, 
+    elevation: 2 
+  },
+  hoursWrapper: { 
+    flex: 1, 
+    marginTop: 20 
+  },
+  sectionTitle: { 
+    fontSize: 16, 
+    fontWeight: '600', 
+    color: theme.colors.textSecondary, 
+    marginBottom: 15 
+  },
+  row: { 
+    justifyContent: 'space-between', 
+    marginBottom: 10 
+  },
   hourBlock: {
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: theme.colors.brand,
-    width: '31%', // Para que quepan 3 con espacio
+    width: '31%', 
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
   },
-  hourText: { color: theme.colors.brand, fontWeight: '700', fontSize: 16 },
-  noHoursContainer: { padding: 20, alignItems: 'center', backgroundColor: '#fee2e2', borderRadius: 10 },
-  noHoursText: { color: theme.colors.error, fontWeight: '500' }
+  hourText: { 
+    color: theme.colors.brand, 
+    fontWeight: '700', 
+    fontSize: 16 
+  },
+  noHoursContainer: { 
+    padding: 20, 
+    alignItems: 'center', 
+    backgroundColor: '#fee2e2', 
+    borderRadius: 10 
+  },
+  noHoursText: { 
+    color: theme.colors.error, 
+    fontWeight: '500' 
+  }
 });
