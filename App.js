@@ -1,40 +1,56 @@
 import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { onAuthStateChanged } from 'firebase/auth'; // Escucha el estado del usuario
-import { auth } from './src/database/firebaseConfig'; // Tu config de Firebase
+import { onAuthStateChanged } from 'firebase/auth'; 
+import { auth } from './src/database/firebaseConfig'; 
+import authService from './src/services/authService'; // Importamos tu servicio de datos
 
-// Importamos tus páginas y el Navegador de pestañas
+// Importamos tus páginas existentes
 import LoginPage from './src/pages/user/loginPage'; 
 import RegisterPage from './src/pages/user/registerPage'; 
 import MainTabNavigation from './src/navigation/mainTabNavigation';
+
+// Importamos la nueva página de Admin
+import DashboardPage from './src/pages/admin/dashboardPage';
 
 const Stack = createStackNavigator();
 
 export default function App() {
   const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null); // Nuevo: Para saber si es admin o cliente
   const [loading, setLoading] = useState(true);
 
-  // El "Guardián": Verifica si hay un usuario logueado al abrir la app
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (userState) => {
-      setUser(userState);
+    const unsubscribe = onAuthStateChanged(auth, async (userState) => {
+      if (userState) {
+        // Buscamos el rol en Firestore antes de dejarlo pasar
+        const perfil = await authService.getUserData(userState.uid);
+        setUser(userState);
+        setRole(perfil?.rol || 'cliente'); // Por defecto cliente si no hay rol
+      } else {
+        setUser(null);
+        setRole(null);
+      }
       setLoading(false);
     });
-    return unsubscribe; // Limpia el listener
+    
+    return unsubscribe; 
   }, []);
 
-  if (loading) return null; // Aquí podrías poner un Splash Screen o Spinner
+  if (loading) return null; 
 
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {user ? (
-          // SI HAY USUARIO: Solo mostramos la barra de 5 bloques
-          // El nombre "Main" es el que usarás para referirte a todo el Tab
-          <Stack.Screen name="Main" component={MainTabNavigation} />
+          // --- SI HAY USUARIO: SEPARAMOS POR ROL ---
+          role === 'admin' ? (
+            <Stack.Screen name="AdminDashboard" component={DashboardPage} />
+          ) : (
+            <Stack.Screen name="Main" component={MainTabNavigation} />
+          )
         ) : (
-          // SI NO HAY USUARIO: Mostramos Login y Registro
+          // --- SI NO HAY USUARIO: LOGIN / REGISTER ---
           <>
             <Stack.Screen name="Login" component={LoginPage} />
             <Stack.Screen name="Register" component={RegisterPage} />

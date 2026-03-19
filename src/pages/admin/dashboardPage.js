@@ -1,23 +1,20 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
-import { theme } from '../../constants/theme'; // Usamos tu theme para consistencia
-import authService from '../../services/authService';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+// Verifica que esta ruta sea exacta. Si tu archivo está en src/services/authService.js, esta ruta es correcta.
+import authService from '../../services/authService'; 
 
 export default function DashboardPage() {
-  // Obtenemos el usuario igual que en ProfilePage
   const user = authService.getCurrentUser();
 
   const handleLogout = async () => {
     try {
       await authService.logout();
-      // App.js detectará el cambio y redirigirá
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
     }
   };
 
-  // Componente de tarjeta con el estilo de tu "infoItem" pero adaptado a grid
   const StatCard = ({ title, value, icon, color }) => (
     <TouchableOpacity style={styles.card} activeOpacity={0.7}>
       <View style={[styles.iconContainer, { backgroundColor: color + '20' }]}>
@@ -34,14 +31,11 @@ export default function DashboardPage() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        
-        {/* Encabezado similar al perfil */}
         <View style={styles.header}>
-          <Text style={styles.userName}>Panel de Control</Text>
+          <Text style={styles.userName}>Panel DuckIndustries</Text>
           <Text style={styles.userEmail}>Admin: {user?.email}</Text>
         </View>
 
-        {/* Grid de Gestión */}
         <View style={styles.grid}>
           <StatCard title="Agenda y Horas" value="Configurar" icon="calendar-clock" color="#4F46E5" />
           <StatCard title="Promociones" value="3 Activas" icon="tag-multiple" color="#10B981" />
@@ -49,92 +43,48 @@ export default function DashboardPage() {
           <StatCard title="Clientes" value="12 Registrados" icon="account-group" color="#06B6D4" />
         </View>
 
-        {/* Botón de Cerrar Sesión (Copia exacta de tu ProfilePage) */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <MaterialCommunityIcons name="logout" size={22} color="#fff" />
           <Text style={styles.logoutButtonText}>Cerrar Sesión</Text>
         </TouchableOpacity>
-
-        <Text style={styles.versionText}>Versión 1.0.0 - Admin Mode</Text>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  scrollContent: {
-    padding: 20,
-    paddingBottom: 40,
-  },
-  header: {
-    marginTop: 20,
-    marginBottom: 30,
-    alignItems: 'flex-start',
-  },
-  userName: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    color: theme.colors.textPrimary,
-  },
-  userEmail: {
-    fontSize: 14,
-    color: theme.colors.textSecondary,
-    marginTop: 5,
-  },
-  grid: {
-    width: '100%',
-    marginBottom: 20,
-  },
+  container: { flex: 1, backgroundColor: '#F9FAFB' },
+  scrollContent: { padding: 20 },
+  header: { marginTop: 40, marginBottom: 30 },
+  userName: { fontSize: 26, fontWeight: 'bold', color: '#1F2937' },
+  userEmail: { fontSize: 14, color: '#6B7280' },
+  grid: { width: '100%', marginBottom: 20 },
   card: {
-    backgroundColor: theme.colors.card,
+    backgroundColor: '#fff',
     flexDirection: 'row',
     alignItems: 'center',
     padding: 18,
     borderRadius: 15,
     marginBottom: 12,
-    ...theme.shadows.card, // Usamos tus sombras del theme
+    // Sombras básicas
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  iconContainer: {
-    padding: 10,
-    borderRadius: 12,
-    marginRight: 15,
-  },
-  cardContent: {
-    flex: 1,
-  },
-  cardValue: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: theme.colors.textPrimary,
-  },
-  cardTitle: {
-    fontSize: 12,
-    color: theme.colors.textSecondary,
-  },
+  iconContainer: { padding: 10, borderRadius: 12, marginRight: 15 },
+  cardContent: { flex: 1 },
+  cardValue: { fontSize: 16, fontWeight: 'bold', color: '#1F2937' },
+  cardTitle: { fontSize: 12, color: '#6B7280' },
   logoutButton: {
     flexDirection: 'row',
-    backgroundColor: theme.colors.error, 
-    width: '100%',
+    backgroundColor: '#EF4444', 
     padding: 16,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 20
   },
-  logoutButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginLeft: 10,
-  },
-  versionText: {
-    textAlign: 'center',
-    marginTop: 30,
-    fontSize: 12,
-    color: '#ccc',
-  }
+  logoutButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold', marginLeft: 10 },
 });
