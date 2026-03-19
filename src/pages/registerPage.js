@@ -54,7 +54,6 @@ const handleRegister = async () => {
 
       if (result.success) {
         alert("¡Cuenta creada con éxito!");
-        navigation.navigate('Login'); // Lo mandamos al login para que entre
       } else {
         // Si hay error (ej: el correo ya existe), Firebase nos avisa
         alert("Error al registrar: " + result.error);

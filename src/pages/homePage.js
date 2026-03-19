@@ -6,7 +6,6 @@ import authService from '../services/authService';
 export default function HomePage({ navigation }) {
   const handleLogout = async () => {
     await authService.logout();
-    navigation.replace('Login'); // Al cerrar sesión, volvemos y limpiamos el historial
   };
 
   return (

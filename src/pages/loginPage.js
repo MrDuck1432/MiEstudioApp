@@ -59,7 +59,7 @@ const handleLogin = async () => {
       if (result.success) {
         // ¡Éxito! Firebase validó las credenciales
         alert("¡Bienvenido de nuevo!");
-          navigation.replace('Main');
+          console.log("Login exitoso, redirigiendo automáticamente...");
         // Aquí es donde lo mandas a la pantalla principal de tu app
         // navigation.navigate('Home'); 
       } else {

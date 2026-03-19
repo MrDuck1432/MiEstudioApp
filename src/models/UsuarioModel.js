@@ -3,8 +3,10 @@ export const UsuarioModel = (nombre, email, rol = 'cliente') => {
     nombre: nombre || "",
     email: email || "",
     rol: rol,
-    fechaRegistro: new Date(),
+    // Usamos string para evitar problemas de formato en diferentes regiones
+    fechaRegistro: new Date().toISOString(), 
     estado: "activo",
-    proximasCitas: []
+    proximasCitas: [],
+    puntos: 0, // ¡Tip! Para fidelizar clientes en DuckIndustries
   };
 };
